@@ -1,14 +1,65 @@
----
-containers: []
 virtualmachines:
-  - name: "host1"
-    image: "rhel-9.5"
-    memory: "2G"
+  - name: "rhel"
+    image: "rhel-10-0-07-09-25-3"
+    bootloader: efi
+    memory: "4G"
     cores: 1
     image_size: "40G"
+    packages:
+      - tree
+      - tmux
+      - git
+      - vim
     tags:
       - key: "AnsibleGroup"
         value: "bastions"
     networks:
       - default
-      - secondary
+    services:
+      - name: cockpit
+        ports:
+          - port: 9090
+            protocol: TCP
+            targetPort: 9090
+            name: cockpit
+    routes:
+      - name: cockpit
+        host: cockpit
+        service: cockpit
+        targetPort: 9090
+        tls: true
+        tls_termination: Edge
+virtualmachines:
+  - name: "client1"
+    image: "rhel-10-0-07-09-25-3"
+    bootloader: efi
+    memory: "4G"
+    cores: 1
+    image_size: "40G"
+    packages:
+      - tree
+      - tmux
+      - git
+      - vim
+    tags:
+      - key: "AnsibleGroup"
+        value: "bastions"
+    networks:
+      - default
+virtualmachines:
+  - name: "client2"
+    image: "rhel-10-0-07-09-25-3"
+    bootloader: efi
+    memory: "4G"
+    cores: 1
+    image_size: "40G"
+    packages:
+      - tree
+      - tmux
+      - git
+      - vim
+    tags:
+      - key: "AnsibleGroup"
+        value: "bastions"
+    networks:
+      - default
