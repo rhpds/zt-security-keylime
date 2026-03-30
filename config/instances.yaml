@@ -29,7 +29,6 @@ virtualmachines:
         targetPort: 9090
         tls: true
         tls_termination: Edge
-virtualmachines:
   - name: "client1"
     image: "rhel-10-0-07-09-25-3"
     bootloader: efi
@@ -46,7 +45,6 @@ virtualmachines:
         value: "bastions"
     networks:
       - default
-virtualmachines:
   - name: "client2"
     image: "rhel-10-0-07-09-25-3"
     bootloader: efi
