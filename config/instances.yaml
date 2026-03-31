@@ -28,7 +28,7 @@ virtualmachines:
       - vim
     tags:
       - key: "AnsibleGroup"
-        value: "bastions"
+        value: "client1"
     networks:
       - default
   - name: "client2"
@@ -44,6 +44,6 @@ virtualmachines:
       - vim
     tags:
       - key: "AnsibleGroup"
-        value: "bastions"
+        value: "client2"
     networks:
       - default 
