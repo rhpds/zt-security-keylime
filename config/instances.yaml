@@ -1,49 +1,35 @@
+---
 virtualmachines:
+  - name: "rhel2"
+    image: "rhel-10-0-07-09-25-3"
+    bootloader: efi
+    memory: "4G"
+    cores: 1
+    image_size: "40G"
+    tags:
+      - key: "AnsibleGroup"
+        value: "nodes"
+    networks:
+      - default
+  - name: "rhel3"
+    image: "rhel-10-0-07-09-25-3"
+    bootloader: efi
+    memory: "4G"
+    cores: 1
+    image_size: "40G"
+    tags:
+      - key: "AnsibleGroup"
+        value: "nodes"
+    networks:
+      - default
   - name: "rhel"
     image: "rhel-10-0-07-09-25-3"
     bootloader: efi
     memory: "4G"
     cores: 1
     image_size: "40G"
-    packages:
-      - tree
-      - tmux
-      - git
-      - vim
     tags:
       - key: "AnsibleGroup"
         value: "bastions"
     networks:
       - default
-  - name: "client1"
-    image: "rhel-10-0-07-09-25-3"
-    bootloader: efi
-    memory: "4G"
-    cores: 1
-    image_size: "40G"
-    packages:
-      - tree
-      - tmux
-      - git
-      - vim
-    tags:
-      - key: "AnsibleGroup"
-        value: "client1"
-    networks:
-      - default
-  - name: "client2"
-    image: "rhel-10-0-07-09-25-3"
-    bootloader: efi
-    memory: "4G"
-    cores: 1
-    image_size: "40G"
-    packages:
-      - tree
-      - tmux
-      - git
-      - vim
-    tags:
-      - key: "AnsibleGroup"
-        value: "client2"
-    networks:
-      - default 
