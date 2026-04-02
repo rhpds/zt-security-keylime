@@ -2,21 +2,288 @@ Welcome to this USBGuard lab experience for Red Hat Enterprise Linux.
 
 In this lab, We teach you about USBGuard.
 
-You can use USBGuard to protect your Red Hat Enterprise Linux system against intrusive USB devices. 
-This framework helps prevent attacks, such as those involving malware or trojans loaded onto USB drives.
+= Introduction to Keylime Remote Attestation
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
 
-The USBGuard framework provides the following components:
+== Overview
 
-* The system service component with an inter-process communication (IPC) interface for dynamic interaction and policy enforcement
-* The command-line interface to interact with a running usbguard system service
-* The rule language for writing USB device authorization policies
-* The C++ API for interacting with the system service component implemented in a shared library
+Keylime is a Cloud Native Computing Foundation (CNCF) project that provides highly scalable remote boot attestation and runtime integrity measurement for distributed systems. Originally developed by MIT Lincoln Laboratory's security research team, Keylime enables organizations to continuously verify the integrity and trustworthiness of remote systems using hardware-based cryptographic roots of trust.
 
-About this Lab Environment: 
+In today's cloud, edge, and IoT environments, ensuring that systems haven't been compromised is critical. Keylime addresses this challenge by leveraging Trusted Platform Module (TPM) technology to provide cryptographic proof that systems are running the expected software and haven't been tampered with.
 
-The system displayed beside this text is a Red Hat Enterprise Linux 10
-system registered with Subscription Manager. An unprivileged user also
-exists on the system.
+== What is Keylime?
+
+Keylime is an open-source remote attestation solution that allows you to:
+
+* *Verify boot integrity* - Confirm that systems boot with trusted, unmodified firmware and operating systems
+* *Monitor runtime integrity* - Continuously check that running systems haven't been compromised
+* *Establish trust* - Cryptographically prove system state using hardware security features
+* *Detect tampering* - Identify unauthorized modifications to critical system files and configurations
+* *Automate response* - Take automated action when integrity violations are detected
+
+[NOTE]
+====
+Remote attestation is the process of verifying the integrity and authenticity of a remote system's hardware and software configuration using cryptographic methods.
+====
+
+== Why Keylime Matters
+
+=== The Security Challenge
+
+In distributed computing environments, traditional security approaches struggle with several challenges:
+
+* *Zero visibility* - How do you know a remote system hasn't been compromised before it connects to your network?
+* *Supply chain attacks* - Firmware and software can be tampered with before deployment
+* *Persistent threats* - Attackers can modify systems and remain undetected
+* *Scale* - Manual verification doesn't work with hundreds or thousands of nodes
+* *Cloud and edge* - Systems run outside your direct control
+
+=== The Keylime Solution
+
+Keylime addresses these challenges by:
+
+* Using hardware security features (TPM) that can't be easily bypassed by attackers
+* Providing continuous verification, not just point-in-time checks
+* Scaling to thousands of nodes with minimal overhead
+* Enabling automated detection and response to integrity violations
+* Working across cloud, edge, and on-premises environments
+
+== How Keylime Works
+
+Keylime uses a hardware-based root of trust—the Trusted Platform Module (TPM)—to establish cryptographic identity and measure system state.
+
+=== The Attestation Process
+
+1. *Measurement* - The TPM measures each component as the system boots (firmware, bootloader, kernel, etc.)
+2. *Storage* - These measurements are stored in TPM Platform Configuration Registers (PCRs)
+3. *Reporting* - The Keylime agent sends measurements to the verifier
+4. *Verification* - The verifier compares measurements against known-good values
+5. *Response* - If verification fails, Keylime can trigger automated responses
+
+[TIP]
+====
+Think of TPM measurements like cryptographic fingerprints. Any change to the system—even a single bit—produces a completely different measurement, making tampering detectable.
+====
+
+=== Integrity Monitoring Architecture
+
+[source,text]
+----
+┌─────────────┐          ┌─────────────┐
+│   Tenant    │          │  Registrar  │
+│ (Management)│          │ (Registry)  │
+└──────┬──────┘          └──────┬──────┘
+       │                        │
+       │    ┌───────────────────┤
+       │    │                   │
+       ▼    ▼                   ▼
+    ┌──────────┐          ┌──────────┐
+    │ Verifier │◄─────────┤  Agent   │
+    │(Validate)│          │ (Node/VM)│
+    └──────────┘          └────┬─────┘
+                               │
+                               ▼
+                          ┌─────────┐
+                          │   TPM   │
+                          │Hardware │
+                          └─────────┘
+----
+
+== Architecture Components
+
+Keylime consists of four main components that work together to provide remote attestation:
+
+=== Agent
+
+* Runs on each system being monitored (the "node" or "device")
+* Interfaces with the local TPM hardware
+* Collects boot measurements and runtime integrity data
+* Reports attestation evidence to the verifier
+* Can receive and execute secure payloads
+
+=== Registrar
+
+* Maintains a registry of all agents
+* Stores TPM identity information (Attestation Keys)
+* Acts as a trust anchor for agent enrollment
+* Provides agent lookup services for the verifier
+* Ensures only authorized agents can participate
+
+=== Verifier
+
+* Validates attestation evidence from agents
+* Compares measurements against expected (allowlist) values
+* Maintains policies for what constitutes "trusted"
+* Triggers revocation actions when integrity fails
+* Scales to monitor thousands of agents simultaneously
+
+=== Tenant
+
+* Management interface for administrators
+* Enrolls new agents for monitoring
+* Defines allowlists (expected measurements)
+* Configures attestation policies
+* Provisions secure payloads to verified agents
+* Monitors attestation status
+
+[IMPORTANT]
+====
+The tenant is the command-and-control interface used by administrators. It's not installed on monitored systems—only the agent runs on monitored nodes.
+====
+
+== Key Capabilities
+
+=== Boot Attestation
+
+Keylime verifies the entire boot chain:
+
+* Firmware (UEFI/BIOS)
+* Bootloader (GRUB)
+* Kernel and initramfs
+* Boot parameters and configuration
+
+This ensures systems boot with trusted, unmodified code.
+
+=== Runtime Integrity Monitoring
+
+Using Linux Integrity Measurement Architecture (IMA), Keylime continuously monitors:
+
+* File modifications
+* Executed binaries
+* Loaded kernel modules
+* Configuration changes
+
+Any deviation from expected state triggers an alert.
+
+=== Secure Provisioning
+
+Once a system passes attestation, Keylime can securely deliver:
+
+* Encryption keys
+* Certificates and credentials
+* Configuration data
+* Application secrets
+
+This ensures secrets are only delivered to verified, trusted systems.
+
+=== Automated Response
+
+When integrity violations are detected, Keylime can:
+
+* Revoke access to protected resources
+* Trigger custom remediation scripts
+* Alert security operations teams
+* Quarantine compromised systems
+* Log events for forensic analysis
+
+== Use Cases
+
+=== Edge Computing
+
+Verify integrity of edge devices before allowing them to process sensitive data or connect to central systems.
+
+*Example:* Retail point-of-sale systems, industrial IoT controllers, autonomous vehicles
+
+=== Cloud Infrastructure
+
+Ensure cloud instances and containers boot with approved images and haven't been tampered with.
+
+*Example:* Multi-tenant cloud platforms, sensitive workload isolation, regulatory compliance
+
+=== Zero Trust Networks
+
+Establish cryptographic proof of system integrity before granting network access.
+
+*Example:* Device health verification, policy-based access control, microsegmentation
+
+=== Supply Chain Security
+
+Detect firmware or software tampering in the supply chain before systems are deployed.
+
+*Example:* Server provisioning, appliance deployment, OEM validation
+
+=== Confidential Computing
+
+Verify that systems running sensitive workloads maintain their integrity throughout execution.
+
+*Example:* Encrypted data processing, secure enclaves, privacy-preserving computation
+
+== Benefits
+
+[cols="1,3"]
+|===
+|Benefit |Description
+
+|*Hardware-rooted trust*
+|Uses TPM cryptographic capabilities that software attackers cannot easily bypass
+
+|*Continuous verification*
+|Monitors systems continuously, not just at deployment time
+
+|*Early detection*
+|Identifies compromises before attackers can cause significant damage
+
+|*Automated response*
+|Reduces time to respond to integrity violations
+
+|*Scalability*
+|Designed to handle thousands of nodes with minimal overhead
+
+|*Open source*
+|CNCF project with active community and enterprise support
+
+|*Standards-based*
+|Built on TPM 2.0 specification and Linux security subsystems
+|===
+
+== What You'll Learn in This Lab
+
+In the following hands-on lab exercises, you will:
+
+1. *Deploy Keylime* - Install and configure the Keylime server components (verifier and registrar) on RHEL 10
+2. *Configure agents* - Set up Keylime agents on monitored systems
+3. *Enroll systems* - Register agents and establish attestation policies
+4. *Verify integrity* - Perform boot attestation and runtime integrity checks
+5. *Test detection* - Simulate integrity violations and observe Keylime's response
+6. *Automate remediation* - Configure automated responses to failed attestation
+
+[TIP]
+====
+This lab uses virtual TPMs (vTPM) for ease of deployment. In production environments, physical TPM 2.0 hardware provides the strongest security guarantees.
+====
+
+== Prerequisites
+
+Before starting the lab, ensure you have:
+
+* Basic understanding of Linux system administration
+* Familiarity with RHEL/CentOS systems
+* Access to RHEL 10 systems (virtual or physical)
+* Root or sudo privileges
+* Active Red Hat subscription (for package access)
+* Ansible installed on your control node
+
+[NOTE]
+====
+While TPM knowledge is helpful, this lab will guide you through the necessary concepts as you progress.
+====
+
+== Additional Resources
+
+* Keylime Project Website: https://keylime.dev
+* CNCF Keylime: https://www.cncf.io/projects/keylime/
+* GitHub Repository: https://github.com/keylime/keylime
+* Documentation: https://keylime.readthedocs.io/
+* TPM 2.0 Specification: https://trustedcomputinggroup.org/
+
+---
+
+Let's get started with deploying Keylime on RHEL 10!
 
 You can use these credentials to login to the `cockpit` web ui.
 
