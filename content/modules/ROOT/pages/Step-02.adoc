@@ -1,12 +1,13 @@
-== Installing the USBGuard packages
+== Installing the RHEL System Roles 
 
-Install the USBGuard framework to begin defining policies that govern which USB devices are allowed to connect to your Red Hat Enterprise Linux system. 
-This is the first step in defending against physical security breaches.
+Install the RHEL System Roles packages which include Keylime Server Ansible System-Roles. This will help us automate the process of installing Keylime servers and clients on your Red Hat Enterprise Linux systems.
 
-Step 2.1 - Install the usbguard package:
+This is the first step.
+
+Step 2.1 - Install the RHEL System Roles  package:
 [source,ini,role=execute,subs=attributes+]
 ----
-dnf install usbguard -y
+sudo dnf install rhel-system-roles ansible-core -y
 ----
 
 Now that we have it installed, lets go to the next step to configure it.
