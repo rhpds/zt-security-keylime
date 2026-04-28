@@ -5,7 +5,7 @@ Install the RHEL System Roles packages which include Keylime Server Ansible Syst
 This is the first step.
 
 Step 2.1 - Install the RHEL System Roles  package:
-[source,ini,role=execute,subs=attributes+]
+[source,bash,role="execute",subs=attributes+]
 ----
 sudo dnf install rhel-system-roles ansible-core -y
 ----
