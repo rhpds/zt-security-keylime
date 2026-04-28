@@ -2,7 +2,7 @@ Configure USBGuard
 
 
 Step 3.1 - Create an initial rule set:
-[source,ini,role=execute,subs=attributes+]
+[source,bash,role="execute",subs=attributes+]
 ----
 usbguard generate-policy > /etc/usbguard/rules.conf
 ----
@@ -10,7 +10,7 @@ usbguard generate-policy > /etc/usbguard/rules.conf
 
 Step 3.2 - Start The Service:
 Start the usbguard daemon and ensure that it starts automatically on boot
-[source,ini,role=execute,subs=attributes+]
+[source,bash,role="execute",subs=attributes+]
 ----
 systemctl enable --now usbguard
 ----
