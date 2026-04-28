@@ -1,13 +1,13 @@
 Verify USBGuard
 
 Step 4.1 - Verify that the usbguard service is running:
-[source,ini,role=execute,subs=attributes+]
+[source,bash,role="execute",subs=attributes+]
 ----
 systemctl status usbguard
 ----
 
 Step 4.2 - List USB devices recognized by USBGuard:
-[source,ini,role=execute,subs=attributes+]
+[source,bash,role="execute",subs=attributes+]
 ----
 usbguard list-devices
 ----
