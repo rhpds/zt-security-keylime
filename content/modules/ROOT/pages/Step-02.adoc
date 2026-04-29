@@ -5,9 +5,54 @@ Install the RHEL System Roles packages which include Keylime Server Ansible Syst
 This is the first step.
 
 Step 2.1 - Install the RHEL System Roles  package:
+
 [source,bash,role="execute",subs=attributes+]
 ----
 sudo dnf install rhel-system-roles ansible-core -y
 ----
 
-Now that we have it installed, lets go to the next step to configure it.
+In RHEL 10, System Roles are installed to /usr/share/ansible/roles/ when installed via the rhel-system-roles RPM package. These roles provide a standardized way to automate system configurations, such as firewall, network, and storage, across RHEL 10 and previous versions
+
+[source,bash,role="execute",subs=attributes+]
+----
+cd /usr/share/ansible/roles/
+----
+
+If we do an "ls" we can see all the system roles that where installed.
+
+[source,bash,role="execute",subs=attributes+]
+----
+ls
+----
+
+we are going to look at the keylime system role.
+
+[source,bash,role="execute",subs=attributes+]
+----
+cd rhel-system-roles.keylime_server
+----
+
+Now we can look at the README.md for an example playbook
+
+[source,bash,role="execute",subs=attributes+]
+----
+cat README.md 
+----
+
+The most basic role is here
+
+[source,bash,role="execute",subs=attributes+]
+----
+- name: Manage keylime servers
+  hosts: all
+
+  vars:
+    keylime_server_verifier_ip: "{{ ansible_host }}"
+    keylime_server_registrar_ip: "{{ ansible_host }}"
+
+  roles:
+    - rhel-system-roles.keylime_server
+----
+
+
+Now that we have it installed, and we see the starter documentation, lets go to the next step to configure it.
