@@ -1,4 +1,4 @@
-== Installing the RHEL System Roles for Keylime
+== Step 2 - Installing the RHEL System Roles for Keylime
 
 Install the RHEL System Roles packages which include Keylime Server Ansible System-Roles. This will help us automate the process of installing Keylime servers and clients on your Red Hat Enterprise Linux systems.
 
