@@ -295,7 +295,36 @@ Password:
 {bastion_ssh_password}
 ----
 
+### Lab Environnement
+
+As part of this lab you will have access to 3 machines.
+
+* rhel (bastion)
+* client1
+* keylimeserver
+
+You will have a couple of accounts you will have access to.
+
+* rhel
+* root
+
+
+**Lab Note:** If Using Red Hat Demo System (RHPDS)
+The terminal window to your right is already logged into the lab environment as the lab-user user via ssh. All steps of this lab are to be completed as the lab-user user on the bastion server.
+
+When you follow the next steps, you will have instructions then a small box with text that is meant to be used in the terminal.
+In the Upper Right Corner there will be a couple of symbols. It Should say something like "BASH", a icon of a clipboard, and an icon of a terminal.
+
+You should also be able to click the terminal icon and the command is then auto typed into the machine terminal.
+
+Alternatively, 
+
+You should be able to click the clipboard icon in the code box to copy the command, and you will either use the middle mouse button or right click and paste. The keyboard shortcuts for copy and paste (ctrl+c and ctrl+v) wont’t work in this.
+
+To Move to the next step, click the "Next" button.
+
+
 Enjoy your keylime lab time, the system will disconnect after about
 60 minutes.
 
-With the intro to USBGuard out of the way, lets head to the next step.
+With the intro to Keylime out of the way, lets head to the next step.
